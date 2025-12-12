@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Plus, X } from 'lucide-react';
+import { MapPin, Plus, X, Navigation } from 'lucide-react';
 
 // Fix for default marker icon
 const customIcon = L.divIcon({
@@ -12,11 +12,11 @@ const customIcon = L.divIcon({
     html: `<div style="
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #ff5500 0%, #ff7733 100%);
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     border: 3px solid white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,6 +26,19 @@ const customIcon = L.divIcon({
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
+});
+
+const userIcon = L.divIcon({
+    className: 'user-marker',
+    html: `<div style="
+    width: 24px;
+    height: 24px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  "></div>`,
+    iconSize: [24, 24],
 });
 
 interface Place {
@@ -58,14 +71,46 @@ export default function MapComponent({ places, onAddPlace, onRemovePlace, center
     const [newPlaceCoords, setNewPlaceCoords] = useState<{ lat: number; lng: number } | null>(null);
     const [newPlaceName, setNewPlaceName] = useState('');
     const [newPlaceNotes, setNewPlaceNotes] = useState('');
+    const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+    const [routePath, setRoutePath] = useState<[number, number][]>([]);
 
     useEffect(() => {
         setIsClient(true);
+        if (typeof window !== 'undefined' && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation([position.coords.latitude, position.coords.longitude]);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                }
+            );
+        }
     }, []);
+
+    const fetchRoute = async (start: [number, number], end: [number, number]) => {
+        try {
+            // OSRM expects lng,lat
+            const response = await fetch(
+                `https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`
+            );
+            const data = await response.json();
+            if (data.routes && data.routes[0]) {
+                // Convert [lng, lat] to [lat, lng]
+                const coordinates = data.routes[0].geometry.coordinates.map((coord: [number, number]) => [coord[1], coord[0]] as [number, number]);
+                setRoutePath(coordinates);
+            }
+        } catch (error) {
+            console.error("Error fetching route:", error);
+        }
+    };
 
     const handleMapClick = (lat: number, lng: number) => {
         setNewPlaceCoords({ lat, lng });
         setShowAddModal(true);
+        if (userLocation) {
+            fetchRoute(userLocation, [lat, lng]);
+        }
     };
 
     const handleAddPlace = () => {
@@ -109,6 +154,21 @@ export default function MapComponent({ places, onAddPlace, onRemovePlace, center
                     />
                     <MapClickHandler onMapClick={handleMapClick} />
 
+                    {/* User Location */}
+                    {userLocation && (
+                        <Marker position={userLocation} icon={userIcon}>
+                            <Popup>You are here</Popup>
+                        </Marker>
+                    )}
+
+                    {/* Route */}
+                    {routePath.length > 0 && (
+                        <Polyline
+                            positions={routePath}
+                            pathOptions={{ color: 'var(--primary)', weight: 4, opacity: 0.8, dashArray: '10, 10' }}
+                        />
+                    )}
+
                     {places.map((place) => (
                         <Marker key={place.id} position={[place.lat, place.lng]} icon={customIcon}>
                             <Popup>
@@ -117,13 +177,24 @@ export default function MapComponent({ places, onAddPlace, onRemovePlace, center
                                     {place.notes && (
                                         <p className="text-sm text-[var(--text-secondary)] mb-3">{place.notes}</p>
                                     )}
-                                    <button
-                                        onClick={() => onRemovePlace(place.id)}
-                                        className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
-                                    >
-                                        <X className="w-3 h-3" />
-                                        Remove
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                if (userLocation) fetchRoute(userLocation, [place.lat, place.lng]);
+                                            }}
+                                            className="text-xs bg-[var(--primary)] text-white px-2 py-1 rounded hover:bg-[var(--primary-dark)] flex items-center gap-1"
+                                        >
+                                            <Navigation className="w-3 h-3" />
+                                            Route
+                                        </button>
+                                        <button
+                                            onClick={() => onRemovePlace(place.id)}
+                                            className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 ml-auto"
+                                        >
+                                            <X className="w-3 h-3" />
+                                            Remove
+                                        </button>
+                                    </div>
                                 </div>
                             </Popup>
                         </Marker>

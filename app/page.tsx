@@ -43,9 +43,9 @@ function HomeContent() {
       <header className="relative overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[var(--primary)]/20 rounded-full blur-[100px] animate-float" />
-          <div className="absolute top-40 right-20 w-96 h-96 bg-[var(--secondary)]/20 rounded-full blur-[120px] animate-float" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-0 left-1/2 w-[600px] h-[600px] bg-[var(--accent)]/10 rounded-full blur-[150px] animate-float" style={{ animationDelay: '4s' }} />
+          {/* Subtle dark glow instead of bright blobs */}
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--primary)]/10 rounded-full blur-[150px]" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[var(--primary)]/5 rounded-full blur-[150px]" />
         </div>
 
         <div className="relative max-w-6xl mx-auto px-6 py-12">
@@ -121,13 +121,13 @@ function HomeContent() {
                 icon: MapPin,
                 title: 'Locate Places',
                 description: 'Add and discover places on an interactive map. Never miss a spot!',
-                color: 'var(--secondary)',
+                color: 'var(--primary)', // Match theme
               },
               {
                 icon: Globe,
                 title: 'Track Budget',
                 description: 'Set budgets, track expenses by category, and stay on top of your spending.',
-                color: 'var(--accent)',
+                color: 'var(--primary)', // Match theme
               },
             ].map((feature, index) => (
               <div

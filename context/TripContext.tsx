@@ -37,7 +37,7 @@ export interface Trip {
 interface TripContextType {
     trips: Trip[];
     currentTrip: Trip | null;
-    addTrip: (trip: Omit<Trip, 'id' | 'createdAt' | 'places' | 'budget'>) => void;
+    addTrip: (trip: Omit<Trip, 'id' | 'createdAt' | 'places' | 'budget'>) => Trip;
     updateTrip: (id: string, trip: Partial<Trip>) => void;
     deleteTrip: (id: string) => void;
     setCurrentTrip: (trip: Trip | null) => void;

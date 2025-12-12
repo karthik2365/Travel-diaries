@@ -47,6 +47,7 @@ export default function TripCard({ trip, onClick, onDelete, delay = 0 }: TripCar
                     alt={trip.destination}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-secondary)] via-transparent to-transparent" />
 
                 {/* Status Badge */}
@@ -95,8 +96,8 @@ export default function TripCard({ trip, onClick, onDelete, delay = 0 }: TripCar
                     <div className="h-2 rounded-full bg-[var(--bg-glass)] overflow-hidden">
                         <div
                             className={`h-full rounded-full transition-all duration-500 ${budgetPercentage > 90 ? 'bg-red-500' :
-                                    budgetPercentage > 70 ? 'bg-yellow-500' :
-                                        'bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)]'
+                                budgetPercentage > 70 ? 'bg-yellow-500' :
+                                    'bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)]'
                                 }`}
                             style={{ width: `${Math.min(budgetPercentage, 100)}%` }}
                         />
