@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-grid bg-gradient-radial">
+      <body className="bg-[var(--bg-primary)]">
         {children}
       </body>
     </html>
