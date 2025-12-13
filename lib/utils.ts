@@ -36,11 +36,34 @@ export const CITY_COORDINATES: Record<string, { lat: number; lon: number }> = {
     "berlin": { lat: 52.5200, lon: 13.4050 },
     "rome": { lat: 41.9028, lon: 12.4964 },
     "mumbai": { lat: 19.0760, lon: 72.8777 },
+    "delhi": { lat: 28.6139, lon: 77.2090 },
+    "bangalore": { lat: 12.9716, lon: 77.5946 },
+    "hyderabad": { lat: 17.3850, lon: 78.4867 },
+    "chennai": { lat: 13.0827, lon: 80.2707 },
+    "toronto": { lat: 43.6532, lon: -79.3832 },
+    "vancouver": { lat: 49.2827, lon: -123.1207 },
+    "barcelona": { lat: 41.3851, lon: 2.1734 },
+    "madrid": { lat: 40.4168, lon: -3.7038 },
+    "amsterdam": { lat: 52.3676, lon: 4.9041 },
+    "bangkok": { lat: 13.7563, lon: 100.5018 },
+    "seoul": { lat: 37.5665, lon: 126.9780 },
+    "hong kong": { lat: 22.3193, lon: 114.1694 },
+    "istanbul": { lat: 41.0082, lon: 28.9784 },
+    "rio de janeiro": { lat: -22.9068, lon: -43.1729 },
+    "cairo": { lat: 30.0444, lon: 31.2357 },
+    "beijing": { lat: 39.9042, lon: 116.4074 },
+    "shanghai": { lat: 31.2304, lon: 121.4737 },
+    "moscow": { lat: 55.7558, lon: 37.6173 },
+    "mexico city": { lat: 19.4326, lon: -99.1332 },
 };
+
+export const CITIES_LIST = Object.keys(CITY_COORDINATES).map(city =>
+    city.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+).sort();
 
 export const getCoordinates = (city: string) => {
     const normalized = city.toLowerCase().trim();
-    return CITY_COORDINATES[normalized] || { lat: 0, lon: 0 }; // Default to 0,0 if not found for prototype
+    return CITY_COORDINATES[normalized] || { lat: 0, lon: 0 };
 };
 
 // Mock Data Generators

@@ -1,5 +1,6 @@
 import { ArrowRight, MapPin } from "lucide-react";
 import { useState } from "react";
+import PlaceAutocomplete from "@/components/ui/PlaceAutocomplete";
 
 interface DestinationStepProps {
     onNext: (destination: string) => void;
@@ -27,22 +28,21 @@ export default function DestinationStep({ onNext }: DestinationStepProps) {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="relative w-full max-w-lg mx-auto group">
-                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
-                        <MapPin className="w-6 h-6" />
-                    </div>
-                    <input
-                        type="text"
+                <form onSubmit={handleSubmit} className="relative w-full max-w-lg mx-auto">
+                    <PlaceAutocomplete
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
-                        placeholder="e.g. Paris, Tokyo, New York"
-                        className="w-full h-16 pl-14 pr-16 bg-card border-2 border-border rounded-full text-xl shadow-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-muted-foreground/50"
+                        onChange={setValue}
+                        onSelect={(val) => {
+                            // Optional: Auto-submit on select if desired, or just let user click arrow
+                            // For now, we update value and keep focus or let user submit
+                        }}
                         autoFocus
                     />
+
                     <button
                         type="submit"
                         disabled={!value.trim()}
-                        className="absolute inset-y-2 right-2 aspect-square rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        className="absolute top-2 right-2 z-10 aspect-square rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all h-12 w-12"
                     >
                         <ArrowRight className="w-6 h-6" />
                     </button>
